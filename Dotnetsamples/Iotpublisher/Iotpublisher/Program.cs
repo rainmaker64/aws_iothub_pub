@@ -9,19 +9,19 @@ namespace Iotpublisher
 {
     class Program
     {
+        const string pfxCertFile = @".\amazon.cert.pfx";
+        const string rootCaCertFile = @".\amazon.pem.crt";
+
         static void Main(string[] args)
         {
-            string iotEndpoint = "<<your-iot-endpoint>>";
+            string iotEndpoint = "a1436zwng9p6hb-ats.iot.us-west-2.amazonaws.com";
             Console.WriteLine("AWS IoT Dotnet message publisher starting..");
 
             int brokerPort = 8883;
             string topic = "Hello/World";
             string message = "Test message";
 
-            var caCert = X509Certificate.CreateFromCertFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AmazonRootCA1.crt"));
-            var clientCert = new X509Certificate2(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "certificate.cert.pfx"), "MyPassword1");
-
-            var client = new MqttClient(iotEndpoint, brokerPort, true, caCert, clientCert, MqttSslProtocols.TLSv1_2);
+            var client = new MqttClient(iotEndpoint, brokerPort, true, new X509Certificate(rootCaCertFile), new X509Certificate(pfxCertFile, "rainmaker64"), MqttSslProtocols.TLSv1_2);
 
             string clientId = Guid.NewGuid().ToString();
             client.Connect(clientId);
